@@ -31,6 +31,9 @@ namespace eticket
             services.AddControllersWithViews();
             //configuring service
             services.AddScoped<IActorsService, ActorsService>();
+            services.AddScoped<IProducerService, ProducerService>();
+            services.AddScoped<ICinemaService, CinemaService>();
+            services.AddScoped<IMoviesService, MovieService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
