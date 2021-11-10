@@ -35,8 +35,5 @@
         </table>
     </div>
 </div>
-<div class="text-white" style="position:fixed;right:25px;bottom:25px">
-    <a asp-controller="Cinemas" asp-action="Create" class="btn btn-success">
-        <i class="bi bi-plus-circle"></i>&nbsp; New
-    </a>
-</div>
+@*Partial view of add button*@
+@await Html.PartialAsync("_Createitem", "Cinemas");

@@ -26,7 +26,7 @@
                         <td class="align-middle">@Html.DisplayFor(model => x.bio)</td>
                         <td class="align-middle">
                             <a class="btn btn-outline-primary" asp-action="Edit" asp-route-id="@x.Id"><i class="bi bi-pencil-square"></i>Edit </a> |
-                            <a class="btn btn-outline-info"asp-action="Details" asp-route-id="@x.Id"><i class="bi bi-eye"></i>Details </a> |
+                            <a class="btn btn-outline-info" asp-action="Details" asp-route-id="@x.Id"><i class="bi bi-eye"></i>Details </a> |
                             <a class="btn btn-danger text-white " asp-action="Delete" asp-route-id="@x.Id"><i class="bi bi-trash"></i>Delete </a>
                         </td>
                     </tr>
@@ -35,8 +35,5 @@
         </table>
     </div>
 </div>
-<div class="text-white" style="position:fixed;right:25px;bottom:25px">
-    <a asp-controller="Producer" asp-action="Create" class="btn btn-success">
-        <i class="bi bi-plus-circle"></i>&nbsp; New
-    </a>
-</div>
+@*Partial view of add button*@
+@await Html.PartialAsync("_Createitem", "Producer");

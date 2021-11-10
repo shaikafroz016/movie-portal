@@ -15,9 +15,32 @@ namespace eticket.Data.Services
         {
             db = context;
         }
-        public void Add(Movie values)
+        public void Add(NewMovieVM values)
         {
-            db.Movies.Add(values);
+            var newmovie = new Movie()
+            {
+                Name = values.Name,
+                Description = values.Description,
+                price = values.price,
+                ImageUrl = values.ImageUrl,
+                CinemaId = values.CinemaId,
+                startdate = values.startdate,
+                enddate = values.enddate,
+                MovieCatg = values.MovieCatg,
+                ProducerId = values.ProducerId
+            };
+            db.Movies.Add(newmovie);
+            db.SaveChanges();
+            //adding actor and movie id in actormovie table
+            foreach(var actorid in values.ActorIds)
+            {
+                var actormov = new Actor_Movie()
+                {
+                    ActorId = actorid,
+                    MovieId = newmovie.Id
+                };
+                db.Actors_Movies.Add(actormov);
+            }
             db.SaveChanges();
         }
 
@@ -38,12 +61,15 @@ namespace eticket.Data.Services
             return obj;
         }
 
-        public NewMovieDropdownsVM getMovieDropdownList()
+        public async Task<NewMovieDropdownsVM> getMovieDropdownList()
         {
-            var response = new NewMovieDropdownsVM();
-            response.Actors = db.Actors.ToList();
-            response.Cinemas = db.Cinemas.OrderBy(e => e.Name).ToList();
-            response.producers = db.producers.ToList();
+            var response = new NewMovieDropdownsVM()
+            {
+                Actors = await db.Actors.OrderBy(n => n.fullname).ToListAsync(),
+                Cinemas = await db.Cinemas.OrderBy(n => n.Name).ToListAsync(),
+                producers = await db.producers.OrderBy(n => n.fullname).ToListAsync()
+            };
+
             return response;
         }
 
@@ -53,10 +79,40 @@ namespace eticket.Data.Services
             return li;
         }
 
-        public void Update(int Id, Movie values)
+        public async Task Update(NewMovieVM data)
         {
-            db.Update(values);
-            db.SaveChanges();
+            var dbMovie = await db.Movies.FirstOrDefaultAsync(n => n.Id == data.Id);
+
+            if (dbMovie != null)
+            {
+                dbMovie.Name = data.Name;
+                dbMovie.Description = data.Description;
+                dbMovie.price = data.price;
+                dbMovie.ImageUrl = data.ImageUrl;
+                dbMovie.CinemaId = data.CinemaId;
+                dbMovie.startdate = data.startdate;
+                dbMovie.enddate = data.enddate;
+                dbMovie.MovieCatg = data.MovieCatg;
+                dbMovie.ProducerId = data.ProducerId;
+                await db.SaveChangesAsync();
+            }
+
+            //Remove existing actors
+            var existingActorsDb = db.Actors_Movies.Where(n => n.MovieId == data.Id).ToList();
+            db.Actors_Movies.RemoveRange(existingActorsDb);
+            await db.SaveChangesAsync();
+
+            //Add Movie Actors
+            foreach (var actorId in data.ActorIds)
+            {
+                var newActorMovie = new Actor_Movie()
+                {
+                    MovieId = data.Id,
+                    ActorId = actorId
+                };
+                await db.Actors_Movies.AddAsync(newActorMovie);
+            }
+            await db.SaveChangesAsync();
         }
     }
 }

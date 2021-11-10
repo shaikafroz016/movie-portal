@@ -19,6 +19,6 @@ namespace eticket.Models
         [Required]
         public string bio { get; set; }
         //relationships
-        public List<NewMovieVM> Movies { get; set; } //one-to-many relation
+        public List<Movie> Movies { get; set; } //one-to-many relation
     }
 }

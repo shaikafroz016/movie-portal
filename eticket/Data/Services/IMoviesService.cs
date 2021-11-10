@@ -12,9 +12,9 @@ namespace eticket.Data.Services
         IEnumerable<Movie> Getrec();
 
         Task<Movie> GetbyId(int Id);
-        void Add(Movie values);
-        void Update(int Id, Movie values);
+        void Add(NewMovieVM values);
+        Task Update(NewMovieVM values);
         void Delete(int Id);
-        NewMovieDropdownsVM getMovieDropdownList();
+        Task<NewMovieDropdownsVM> getMovieDropdownList();
     }
 }

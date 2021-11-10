@@ -26,6 +26,6 @@ namespace eticket.Models
             get; set;
         }
         //relationship
-        public List<NewMovieVM> Movies { get; set; }
+        public List<Movie> Movies { get; set; }
     }
 }

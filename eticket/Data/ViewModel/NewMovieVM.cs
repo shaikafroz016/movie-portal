@@ -1,13 +1,10 @@
-﻿using eticket.Data;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Web;
+using System.Threading.Tasks;
 
-namespace eticket.Models
+namespace eticket.Data.ViewModel
 {
     public class NewMovieVM
     {
@@ -44,8 +41,7 @@ namespace eticket.Models
         //Relationships
         [Display(Name = "Select actor(s)")]
         [Required(ErrorMessage = "Movie actor(s) is required")]
-        [NotMapped]
-        public IEnumerable<int> ActorIds { get; set; }
+        public List<int> ActorIds { get; set; }
 
         [Display(Name = "Select a cinema")]
         [Required(ErrorMessage = "Movie cinema is required")]
@@ -54,6 +50,5 @@ namespace eticket.Models
         [Display(Name = "Select a producer")]
         [Required(ErrorMessage = "Movie producer is required")]
         public int ProducerId { get; set; }
-
     }
 }
