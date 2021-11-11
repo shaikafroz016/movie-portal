@@ -33,8 +33,16 @@ namespace eticket.Controllers
                 a[0] = char.ToUpper(a[0]);
                 searchString = new string(a);
                 var filteredResult = allMovies.Where(n => n.Name.Contains(searchString) || n.Description.Contains(searchString)).ToList();
-                return View("Index", filteredResult);
+                if (filteredResult.Count>0)
+                {
+                    return View("Index", filteredResult);
+                }
+                else
+                {
+                    return View("Index", allMovies);
+                }
             }
+            
 
             return View("Index", allMovies);
         }

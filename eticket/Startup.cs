@@ -1,7 +1,9 @@
 using eticket.Data;
+using eticket.Data.Cart;
 using eticket.Data.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -28,12 +30,17 @@ namespace eticket
         {
             //dbcontext config
             services.AddDbContext<AppDbContext>(options=>options.UseSqlServer(Configuration.GetConnectionString("DefaultConnectionString")));
-            services.AddControllersWithViews();
             //configuring service
             services.AddScoped<IActorsService, ActorsService>();
             services.AddScoped<IProducerService, ProducerService>();
             services.AddScoped<ICinemaService, CinemaService>();
             services.AddScoped<IMoviesService, MovieService>();
+            services.AddScoped<IOrderService, OrderService>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddScoped ( sc => ShoppingCart.GetShoppingCart(sc)) ;
+            services.AddSession();
+            services.AddControllersWithViews();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,6 +60,7 @@ namespace eticket
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseSession();
 
             app.UseAuthorization();
 

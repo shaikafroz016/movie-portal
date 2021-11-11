@@ -1,0 +1,126 @@
+﻿@using eticket.Data.ViewModel;
+@model ShoppingcartVM
+
+@{
+    ViewData["Title"] = "Shopping cart summary";
+}
+
+<div class="row">
+    <div class="col-md-8 offset-2">
+        <div class="text-center">
+            <h2>You shopping cart summary</h2>
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Selected amount</th>
+                    <th>Movie</th>
+                    <th>Price</th>
+                    <th>Subtotal</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.ShoppingCart.shoppingCartItems)
+                {
+                    <tr>
+                        <td class="align-middle">@item.Amount</td>
+                        <td class="align-middle">@item.Movie.Name</td>
+                        <td class="align-middle">@item.Movie.price.ToString("c")</td>
+                        <td class="align-middle">@((item.Amount*item.Movie.price).ToString("c"))</td>
+                        <td class="align-middle">
+                            <a class="text-danger" asp-controller="Orders" asp-action="RemoveItemFromShoppingCart"
+                               asp-route-id="@item.Movie.Id">
+                                <i class="bi bi-cart-dash"></i>
+                            </a>
+                            |
+                            <a class="text-success" asp-controller="Orders" asp-action="AddItemToShoppingCart"
+                               asp-route-id="@item.Movie.Id">
+                                <i class="bi bi-cart-plus"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="2"></td>
+                    <td><b>Total:</b></td>
+                    <td>
+                        @Model.ShoppingCartTotal.ToString("c")
+                    </td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <div class="text-right">
+            <div class="btn-group">
+                @*<a class="btn btn-outline-primary" asp-action="CompleteOrder">
+                        Complete order
+                    </a>*@
+                <div id="paypal-btn"></div>
+                <span style="padding:5px"></span>
+                <a class="btn btn-outline-success" style="margin-bottom:6%; border-radius:30px" asp-controller="Movies" asp-action="Index">
+                    Add more items
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts{
+
+    <script src="https://www.paypalobjects.com/api/checkout.js"></script>
+
+    <script>
+        let _total = @Html.Raw(Model.ShoppingCartTotal);
+        paypal.Button.render({
+            //Configure environment
+            env: 'sandbox',
+            client: {
+                sandbox: 'ARNzAYF7qSkXdhaiPdIYTC2FcUzOpV5BhE4fgKvxSM2kT2gHtz1yoM8yXLvkLyq2RjZ9H0H7RwiLpAcH'
+            },
+            //Customize button
+            locale: 'en_US',
+            style: {
+                size: 'medium',
+                color: 'gold',
+                shape: 'pill'
+            },
+            commit: true,
+            //Set up a payment
+            payment: function (data, actions) {
+                return actions.payment.create({
+                    transactions: [{
+                        amount: {
+                            total: _total,
+                            currency: 'USD'
+                        }
+                    }]
+                });
+            },
+            //Execute the payment
+            onAuthorize: function (data, actions) {
+                return actions.payment.execute().then(function () {
+                    var url = '@Url.Action("CompleteOrder", "Orders", new { })';
+                    window.location.href = url;
+                });
+            }
+        }, '#paypal-btn')
+    </script>
+}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!-- Toastr -->
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+       if('@ViewBag.message' == "Added") {
+          toastr.success('Added To Cart');
+       }
+       else{ }
+    });
+</script>
