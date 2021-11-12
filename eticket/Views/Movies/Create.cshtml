@@ -47,6 +47,7 @@
                             <div class="form-group">
                                 <label asp-for="CinemaId" class="control-label"></label>
                                 <select asp-for="CinemaId" class="form-control" asp-items="ViewBag.Cinemas"></select>
+                                <a asp-controller="Cinemas" asp-action="Create">Create new</a>
                                 <span asp-validation-for="CinemaId" class="text-danger"></span>
                             </div>
                             <div class="form-group">
@@ -57,11 +58,13 @@
                             <div class="form-group">
                                 <label asp-for="ProducerId" class="control-label"></label>
                                 <select asp-for="ProducerId" class="form-control" asp-items="ViewBag.Producers"></select>
+                                <a asp-controller="Producer" asp-action="Create">Create new</a>
                                 <span asp-validation-for="ProducerId" class="text-danger"></span>
                             </div>
                             <div class="form-group">
                                 <label asp-for="ActorIds" class="control-label"></label>
                                 <select asp-for="ActorIds" class="form-control" asp-items="ViewBag.Actors" multiple></select>
+                                <a asp-controller="Actors" asp-action="Create">Create new</a>
                                 <span asp-validation-for="ActorIds" class="text-danger"></span>
                             </div>
                         </div>
