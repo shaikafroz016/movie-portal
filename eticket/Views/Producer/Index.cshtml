@@ -12,7 +12,11 @@
                     <th>@Html.DisplayNameFor(x => x.fullname)</th>
 
                     <th>@Html.DisplayNameFor(x => x.bio)</th>
-                    <th>Action</th>
+                    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                    {
+                        <th class="text-center">Actions</th>
+                    }
+
                 </tr>
             </thead>
             <tbody>
@@ -24,11 +28,15 @@
                         </td>
                         <td class="align-middle">@Html.DisplayFor(model => x.fullname)</td>
                         <td class="align-middle">@Html.DisplayFor(model => x.bio)</td>
-                        <td class="align-middle">
-                            <a class="btn btn-outline-primary" asp-action="Edit" asp-route-id="@x.Id"><i class="bi bi-pencil-square"></i>Edit </a> |
-                            <a class="btn btn-outline-info" asp-action="Details" asp-route-id="@x.Id"><i class="bi bi-eye"></i>Details </a> |
-                            <a class="btn btn-danger text-white " asp-action="Delete" asp-route-id="@x.Id"><i class="bi bi-trash"></i>Delete </a>
-                        </td>
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                        {
+                            <td class="align-middle">
+                                <a class="btn btn-outline-primary" asp-action="Edit" asp-route-id="@x.Id"><i class="bi bi-pencil-square"></i>Edit </a> |
+                                <a class="btn btn-outline-info" asp-action="Details" asp-route-id="@x.Id"><i class="bi bi-eye"></i>Details </a> |
+                                <a class="btn btn-danger text-white " asp-action="Delete" asp-route-id="@x.Id"><i class="bi bi-trash"></i>Delete </a>
+                            </td>
+                        }
+
                     </tr>
                 }
             </tbody>
@@ -36,4 +44,7 @@
     </div>
 </div>
 @*Partial view of add button*@
-@await Html.PartialAsync("_Createitem", "Producer");
+@if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+{
+    @await Html.PartialAsync("_Createitem", "Producer");
+}

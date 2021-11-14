@@ -2,14 +2,17 @@
 using eticket.Data.Services;
 using eticket.Data.ViewModel;
 using eticket.Migrations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace eticket.Controllers
 {
+    [Authorize]
     public class OrdersController : Controller
     {
         private readonly IMoviesService dalmovie;
@@ -24,9 +27,10 @@ namespace eticket.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            string userId = "";
-
-            var orders = await dalordderservice.GetOrdersByUserIdAsync(userId);
+            //Taking userid and email from loggedin user and saving into orders
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            string userRole=User.FindFirstValue(ClaimTypes.Role);
+            var orders = await dalordderservice.GetOrdersByUserIdAndRoleAsync(userId,userRole);
             return View(orders);
         }
         public IActionResult ShoppingCart(string message)
@@ -69,8 +73,10 @@ namespace eticket.Controllers
         public async Task<IActionResult> CompleteOrder()
         {
             var items = dalshoppingcart.GetShoppingCartItems();
-            string userId = "";
-            string userEmailAddress = "";
+
+            //Taking userid and email from loggedin user and saving into orders
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            string userEmailAddress = User.FindFirstValue(ClaimTypes.Email);
 
             await dalordderservice.StoreOrderAsync(items, userId, userEmailAddress);
             await dalshoppingcart.ClearShoppingCartAsync();

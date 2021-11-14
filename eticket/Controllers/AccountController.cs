@@ -2,11 +2,13 @@
 using eticket.Data.Static;
 using eticket.Data.ViewModel;
 using eticket.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace eticket.Controllers
@@ -24,6 +26,50 @@ namespace eticket.Controllers
             _context = context;
         }
 
+        public IActionResult Users()
+        {
+            var result = _context.Users.ToList();
+            return View(result);
+        }
+        [Authorize]
+        public async Task<IActionResult> UpdateProfile()
+        {
+            var currentUser = _userManager.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            var userdetails = new RegisterVM()
+            {
+                FullName = currentUser.Fullname,
+                EmailAddress = currentUser.Email,
+                Username = currentUser.UserName
+            };
+
+            return View(userdetails);
+        }
+        [HttpPost]
+        public async Task<IActionResult> UpdateProfile(RegisterVM registerVM)
+        {
+            if (!ModelState.IsValid) return View(registerVM);
+
+            var user = await _userManager.FindByEmailAsync(registerVM.EmailAddress);
+            if (user != null)
+            {
+                TempData["Error"] = "This email address is already in use";
+                return View(registerVM);
+            }
+
+            var newUser = new ApplicationUser()
+            {
+                Fullname = registerVM.FullName,
+                Email = registerVM.EmailAddress,
+                UserName = registerVM.Username
+            };
+            var newUserResponse = await _userManager.UpdateAsync(newUser);
+
+            if (newUserResponse.Succeeded)
+                await _userManager.AddToRoleAsync(newUser, UserRoles.User);
+
+
+            return Content("Update succes");
+        }
         public IActionResult Login()
         {
             return View(new LoginVM());
@@ -79,7 +125,7 @@ namespace eticket.Controllers
             {
                 Fullname = registerVM.FullName,
                 Email = registerVM.EmailAddress,
-                UserName = registerVM.EmailAddress
+                UserName = registerVM.Username
             };
             var newUserResponse = await _userManager.CreateAsync(newUser, registerVM.Password);
 
@@ -88,6 +134,17 @@ namespace eticket.Controllers
            
 
             return View("RegisterCompleted");
+        }
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Index", "Movies");
+        }
+
+        public IActionResult AccessDenied(string ReturnUrl)
+        {
+            return View();
         }
     }
 }

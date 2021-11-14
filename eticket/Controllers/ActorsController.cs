@@ -1,6 +1,8 @@
 ﻿using eticket.Data;
 using eticket.Data.Services;
+using eticket.Data.Static;
 using eticket.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -9,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace eticket.Controllers
 {
+    [Authorize(Roles = UserRoles.Admin)]
     public class ActorsController : Controller
     {
         private readonly IActorsService dal;
@@ -16,6 +19,7 @@ namespace eticket.Controllers
         {
             dal = service;
         }
+        [AllowAnonymous]
         public IActionResult Index()
         {
             var data = dal.Getrec();
@@ -39,6 +43,10 @@ namespace eticket.Controllers
         public IActionResult Edit(int Id)
         {
             var obj = dal.GetbyId(Id);
+            if (obj == null)
+            {
+                return View("NotFound");
+            }
             return View(obj);
         }
         [HttpPost]
@@ -49,14 +57,23 @@ namespace eticket.Controllers
             return RedirectToAction("Index");
 
         }
+        [AllowAnonymous]
         public IActionResult Details(int id)
         {
            var obj= dal.GetbyId(id);
+            if (obj == null)
+            {
+                return View("NotFound");
+            }
             return View(obj);
         }
         public IActionResult Delete(int id)
         {
             var obj = dal.GetbyId(id);
+            if (obj == null)
+            {
+                return View("NotFound");
+            }
             return View(obj);
         }
         [HttpPost, ActionName("Delete")]
@@ -68,5 +85,6 @@ namespace eticket.Controllers
             dal.Delete(id);
             return RedirectToAction(nameof(Index));
         }
+        
     }
 }

@@ -1,6 +1,8 @@
 ﻿using eticket.Data;
 using eticket.Data.Services;
+using eticket.Data.Static;
 using eticket.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -9,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace eticket.Controllers
 {
+    [Authorize(Roles =UserRoles.Admin)]
     public class ProducerController : Controller
     {
         private readonly IProducerService dal;
@@ -16,6 +19,7 @@ namespace eticket.Controllers
         {
             dal = ser;
         }
+        [AllowAnonymous]
         public IActionResult Index()
         {
             var data = dal.Getrec();
@@ -49,6 +53,7 @@ namespace eticket.Controllers
             return RedirectToAction("Index");
 
         }
+        [AllowAnonymous]
         public IActionResult Details(int id)
         {
             var obj = dal.GetbyId(id);

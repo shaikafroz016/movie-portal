@@ -1,17 +1,17 @@
-﻿@model IEnumerable<Actor>
+﻿@model IEnumerable<ApplicationUser>
 @{
-    ViewData["title"] = "List of Actors";
+    ViewData["title"] = "List of Users";
 }
 <div class="row">
     <div class="col-md-8 offset-md-2">
         <table class="table">
             <thead>
                 <tr>
-                    <th>@Html.DisplayNameFor(x => x.profilepic)</th>
+                    <th>@Html.DisplayNameFor(x => x.Fullname)</th>
 
-                    <th>@Html.DisplayNameFor(x => x.fullname)</th>
+                    <th>@Html.DisplayNameFor(x => x.UserName)</th>
 
-                    <th>@Html.DisplayNameFor(x => x.bio)</th>
+                    <th>@Html.DisplayNameFor(x => x.Email)</th>
                     @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                     {
                         <th class="text-center"> Actions</th>
@@ -23,11 +23,10 @@
                 @foreach (var x in Model)
                 {
                     <tr>
-                        <td class="align-middle">
-                            <img class="rounded-circle" src="@x.profilepic" alt="@x.fullname" style="max-width:150px" />
-                        </td>
-                        <td class="align-middle">@Html.DisplayFor(model => x.fullname)</td>
-                        <td class="align-middle">@Html.DisplayFor(model => x.bio)</td>
+                        
+                        <td class="align-middle">@Html.DisplayFor(model => x.Fullname)</td>
+                        <td class="align-middle">@Html.DisplayFor(model => x.UserName)</td>
+                        <td class="align-middle">@Html.DisplayFor(model=>x.Email)</td>
                         @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                         {
                             <td class="align-middle">
@@ -45,5 +44,5 @@
 @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
 {
     @await Html.PartialAsync("_Createitem", "Actors");
-    
+
 }

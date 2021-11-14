@@ -1,6 +1,8 @@
 ﻿using eticket.Data;
 using eticket.Data.Services;
+using eticket.Data.Static;
 using eticket.Data.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +13,8 @@ using System.Threading.Tasks;
 
 namespace eticket.Controllers
 {
+    [Authorize(Roles = UserRoles.Admin)]
+
     public class MoviesController : Controller
     {
         private readonly IMoviesService dal;
@@ -18,12 +22,13 @@ namespace eticket.Controllers
         {
             dal = service;
         }
+        [AllowAnonymous]
         public IActionResult Index()
         {
             var allmovies = dal.Getrec();
             return View(allmovies);
         }
-
+        [AllowAnonymous]
         public async Task<IActionResult> Filter(string searchString)
         {
             var allMovies =  dal.Getrec();
@@ -46,6 +51,7 @@ namespace eticket.Controllers
 
             return View("Index", allMovies);
         }
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int id)
         {
             var movieDetail = await dal.GetbyId(id);

@@ -15,9 +15,14 @@ namespace eticket.Data.Services
             db = context;
         }
 
-        public async Task<List<Order>> GetOrdersByUserIdAsync(string userId)
+        public async Task<List<Order>> GetOrdersByUserIdAndRoleAsync(string userId,string UserRole)
         {
-            var orders = await db.Orders.Include(n => n.OrderItems).ThenInclude(n => n.Movie).Where(n => n.userId == userId).ToListAsync();
+            var orders = await db.Orders.Include(n => n.OrderItems).ThenInclude(n => n.Movie).Include(n=>n.user).ToListAsync();
+            //if user is not an admin then user will get their order obly
+            if (UserRole != "Admin")
+            {
+                orders = orders.Where(n => n.userId == userId).ToList();
+            }
             return orders;
         }
 
